@@ -15,12 +15,21 @@ public class ConfigReader {
                 .getResourceAsStream("config.properties")) {
 
             properties.load(input);
+            System.out.println("Properties file loaded");
         } catch (Exception e) {
            throw new RuntimeException("Could not load config.properties " + "\n" + e);
         }
 
     }
 
+
+    public static String getBaseUrl(){
+        return getUrl("baseUrl");
+    }
+
+    public static String getTestDataUrl(){
+        return getUrl("testDataUrl");
+    }
 
     public static String getUrl(String urlType){
         return getValue(urlType);
@@ -41,7 +50,13 @@ public class ConfigReader {
 
         if (systemValue == null || systemValue.isBlank()){
 
-            return properties.getProperty(key);
+            try{
+                return properties.getProperty(key);
+
+            }
+            catch(Exception e){
+                throw new RuntimeException("Property" + key + " key or value not found in configs file");
+            }
         }
 
         return systemValue;

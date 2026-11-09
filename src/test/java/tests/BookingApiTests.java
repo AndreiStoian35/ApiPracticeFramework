@@ -189,8 +189,6 @@ public class BookingApiTests extends BaseApiTest{
         Assertions.assertEquals(200, createBookingResponse.status());
         PostBookingResponse postBookingResponse = mapper.readValue(createBookingResponse.text(), PostBookingResponse.class);
 
-
-
         String authToken = apiUtils.getAuthToken();
 
         Allure.step("DELETING booking..");
@@ -244,6 +242,31 @@ public class BookingApiTests extends BaseApiTest{
 
     }
 
+    @Test
+    public void shouldGetBookingByUsername() throws JsonProcessingException {
+
+        APIResponse createBookingResponse = apiUtils.createBooking();
+        Assertions.assertEquals(200, createBookingResponse.status());
+        PostBookingResponse postBookingResponse = mapper.readValue(createBookingResponse.text(), PostBookingResponse.class);
+
+        APIResponse getBooking = bookingApi.getBookingsByName(postBookingResponse.booking.firstName,
+                postBookingResponse.booking.lastName);
+
+        List<GetResponseBookingId> getBookingBodyIdList = mapper.readValue(getBooking.text(),new TypeReference<List<GetResponseBookingId>>(){});
+
+        Assertions.assertFalse(getBookingBodyIdList.isEmpty());
+        Assertions.assertTrue(getBookingBodyIdList.stream().anyMatch(item -> postBookingResponse.bookingId.equals(item.bookingId)));
+
+    }
+
+
+    @Test
+    public void shouldReturn404(){
+
+        APIResponse response = bookingApi.getBookingId(99999);
+
+        Assertions.assertEquals(404,response.status());
+    }
 
 
 

@@ -15,6 +15,7 @@ public class TestContext {
     public void clear(){
         bookingId = null;
         requestBookingBody = null;
+        postBookingResponseBody = null;
     }
 
 }
