@@ -73,6 +73,15 @@ public class BookingApiTests extends BaseApiTest{
         Assertions.assertEquals(postBodyToVerify.bookingdates.checkout, responseBookingBody.booking.bookingDates.checkOut);
         Assertions.assertEquals(postBodyToVerify.additionalneeds,responseBookingBody.booking.additionalNeeds);
 
+        String authToken = apiUtils.getAuthToken();
+
+        Allure.step("DELETING booking..");
+        APIResponse deleteBookingResponse = bookingApi.deleteBooking(responseBookingBody.bookingId,
+                RequestOptions.create()
+                        .setHeader("Cookie", "token=" + authToken));
+
+        Assertions.assertEquals(201,deleteBookingResponse.status());
+
     }
 
 
@@ -145,6 +154,14 @@ public class BookingApiTests extends BaseApiTest{
         Assertions.assertEquals(updateResponseBody.additionalNeeds, bookingResponseBody.booking.additionalNeeds);
         Assertions.assertNotEquals(updateResponseBody.totalPrice,bookingResponseBody.booking.totalPrice);
 
+
+        Allure.step("DELETING booking..");
+        APIResponse deleteBookingResponse = bookingApi.deleteBooking(bookingResponseBody.bookingId,
+                RequestOptions.create()
+                        .setHeader("Cookie", "token=" + authToken));
+
+        Assertions.assertEquals(201,deleteBookingResponse.status());
+
     }
 
 
@@ -177,7 +194,18 @@ public class BookingApiTests extends BaseApiTest{
                         .setHeader("Accept","application/json")
                         .setData(json));
 
+        Allure.step("Asserting booking can't be updated without auth token");
         Assertions.assertEquals(403,updateBookingResponse.status());
+
+
+        Allure.step("Adding auth and DELETING booking..");
+        String authToken = apiUtils.getAuthToken();
+
+        APIResponse deleteBookingResponse = bookingApi.deleteBooking(bookingResponseBody.bookingId,
+                RequestOptions.create()
+                        .setHeader("Cookie", "token=" + authToken));
+
+        Assertions.assertEquals(201,deleteBookingResponse.status());
 
 
     }
@@ -240,6 +268,14 @@ public class BookingApiTests extends BaseApiTest{
         Assertions.assertEquals(postBookingResponse.booking.bookingDates.checkOut, bodyAfterPatch.bookingDates.checkOut);
         Assertions.assertEquals(postBookingResponse.booking.additionalNeeds, bodyAfterPatch.additionalNeeds);
 
+
+        Allure.step("Adding auth and DELETING booking..");
+        APIResponse deleteBookingResponse = bookingApi.deleteBooking(postBookingResponse.bookingId,
+                RequestOptions.create()
+                        .setHeader("Cookie", "token=" + authToken));
+
+        Assertions.assertEquals(201,deleteBookingResponse.status());
+
     }
 
     @Test
@@ -257,6 +293,13 @@ public class BookingApiTests extends BaseApiTest{
         Assertions.assertFalse(getBookingBodyIdList.isEmpty());
         Assertions.assertTrue(getBookingBodyIdList.stream().anyMatch(item -> postBookingResponse.bookingId.equals(item.bookingId)));
 
+        String authToken = apiUtils.getAuthToken();
+        Allure.step("Adding auth and DELETING booking..");
+        APIResponse deleteBookingResponse = bookingApi.deleteBooking(postBookingResponse.bookingId,
+                RequestOptions.create()
+                        .setHeader("Cookie", "token=" + authToken));
+
+        Assertions.assertEquals(201,deleteBookingResponse.status());
     }
 
 

@@ -47,16 +47,19 @@ public class ConfigReader {
     private static String getValue(String key){
 
         String systemValue = System.getenv(key);
+        String configValue = properties.getProperty(key);
 
         if (systemValue == null || systemValue.isBlank()){
+            if(configValue != null && !configValue.isBlank()){
+                try{
+                    return configValue;
 
-            try{
-                return properties.getProperty(key);
+                }
+                catch(Exception e){
+                    throw new RuntimeException("Property" + key + " key or value not found in configs file");
+                }
+            }
 
-            }
-            catch(Exception e){
-                throw new RuntimeException("Property" + key + " key or value not found in configs file");
-            }
         }
 
         return systemValue;
